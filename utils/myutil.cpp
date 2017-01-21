@@ -57,7 +57,7 @@ int getInteger (string sInputNumber) throw(WrongIntInput) {
         start = 1; //offset for the next check
     // check that there are no non-digit characters
     found = sInputNumber.find_first_not_of(scDigits, start);
-    if (found != string::npos) throw WrongIntInput();
+    if (found != string::npos) throw WrongIntInput(sInputNumber);
     else iInputNumber = std::stoi(sInputNumber);
 
     return iInputNumber;

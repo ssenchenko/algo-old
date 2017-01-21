@@ -21,7 +21,7 @@ std::string const scUnexpectedEOF("Unxpected end of file");
 // exception for the wrong integer input
 class WrongIntInput : public std::domain_error {
 public:
-    WrongIntInput(std::string s) : std::domain_error(scWrongNumber + " " + s) {};
+    WrongIntInput(std::string s) : std::domain_error(s) {};
 };
 
 // check and get input number
