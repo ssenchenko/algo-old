@@ -16,6 +16,7 @@ std::string const scNewLine("\r\n");
 
 std::string const scWrongNumber("Wrong number. Please try again");
 std::string const scGetlineError("Error reading a string");
+std::string const scUnexpectedEOF("Unxpected end of file");
 
 // exception for the wrong integer input
 class WrongIntInput : public std::domain_error {
