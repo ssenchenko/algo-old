@@ -57,7 +57,7 @@ int getInteger (string sInputNumber) throw(WrongIntInput) {
         start = 1; //offset for the next check
     // check that there are no non-digit characters
     found = sInputNumber.find_first_not_of(scDigits, start);
-    if (found != string::npos) throw WrongIntInput(sInputNumber);
+    if (found != string::npos) throw WrongIntInput(scWrongNumber + " " + sInputNumber);
     else iInputNumber = std::stoi(sInputNumber);
 
     return iInputNumber;
@@ -103,7 +103,7 @@ std::vector<int> parse_string(std::string s, std::string delimeter){
             num = getInteger(tmp);
             numbers.push_back(num);
         }
-        catch (std::domain_error e) {
+        catch (WrongIntInput e) {
             std::cerr << e.what() << std::endl;
         }
     }
@@ -150,7 +150,7 @@ long getLong (string sInputNumber) throw(WrongIntInput) {
         start = 1; //offset for the next check
     // check that there are no non-digit characters
     found = sInputNumber.find_first_not_of(scDigits, start);
-    if (found != string::npos) throw WrongIntInput();
+    if (found != string::npos) throw WrongIntInput(scWrongNumber + " " + sInputNumber);
     else
         iInputNumber = std::stol(sInputNumber);
 
