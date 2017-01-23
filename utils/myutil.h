@@ -14,8 +14,9 @@ std::string const scDataPath("../../test_data/");
 std::string const scDigits("0123456789");
 std::string const scNewLine("\r\n");
 
-std::string const scWrongNumber("Wrong number. Please try again");
-std::string const scGetlineError("Error reading a string");
+std::string const scWrongNumber = "Wrong number. Please try again";
+std::string const scGetlineError = "Error reading a string";
+std::string const scUnexpectedEOF = "Unexpected end of file";
 
 // exception for the wrong integer input
 class WrongIntInput : public std::domain_error {
