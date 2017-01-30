@@ -169,7 +169,8 @@ void runTest_c3w1 () {
 	std::chrono::duration<double> elapsed_seconds;
 	// get the input from file
 	std::ifstream file;
-	file.open(scPath + scFile9);
+	std::string testFile = "test-mst.txt";
+	file.open(scPath + testFile/*scFile9*/);
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
 		file.clear();
@@ -178,7 +179,6 @@ void runTest_c3w1 () {
 		start = std::chrono::system_clock::now();
 
 		string s;
-		std::vector<string> tuples;
 		// read first line to get number of vertices and edges
 		getline(file, s);
 		if (file.fail()) {
@@ -194,7 +194,6 @@ void runTest_c3w1 () {
 			std::vector<int> v = parse_string(s, " ");
 			v_num = v.front();
 			VSet nodes(v_num);
-//			VSet nodes(4);
 			Graph G(nodes);
 			// read other lines
 			while (true) {
@@ -228,16 +227,170 @@ void runTest_c3w1 () {
 			elapsed_seconds = end - start;
 
 			cout << "MST prim computed " << elapsed_seconds.count() << "s" << endl;
-//			for (auto &&n : *nodes.vertices_ptr()) {
-//				cout << n->label() << " | " << path[n->label() - 1] << endl;
-//			}
+
 			int sum = 0, counter = 0;
 			for (auto &&leaf : tree) {
-				// cout << std::setw(3) << ++counter << ": " << std::setw(7) << leaf << endl;
+				cout << std::setw(3) << ++counter << ": " << std::setw(7) << leaf << endl;
 				sum += leaf;
 			}
 
 			cout << sum << endl;
+		}
+	}
+}
+
+// Kruskal's minimum spanning tree algorithm
+void runTest_c3w2_1 () {
+
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+	std::chrono::duration<double> elapsed_seconds;
+	// get the input from file
+	std::ifstream file;
+	std::string testFile = "c3w1_edges.txt";
+	file.open(scPath + testFile/*scFile9*/);
+	if (file.fail()) {
+		cerr << "Wrong file name!" << endl;
+		file.clear();
+	}
+	else {
+		start = std::chrono::system_clock::now();
+
+		string s;
+		// read first line to get number of vertices and edges
+		getline(file, s);
+		if (file.fail()) {
+			std::cerr << scGetlineError << std::endl;
+			file.clear();
+		}
+		else if (file.eof()) {
+			std::cerr << scUnexpectedEOF << std::endl;
+			file.clear();
+		}
+		else {
+			size_t v_num;
+			std::vector<int> v = parse_string(s, " ");
+			v_num = v.front();
+			VSet nodes(v_num);
+			Graph G(nodes);
+
+			// read other lines
+			while (true) {
+				getline(file, s);
+				if (file.eof()) {
+					file.clear();
+					break;
+				}
+				if (file.fail()) {
+					std::cerr << scGetlineError << std::endl;
+					file.clear();
+					break;
+				}
+
+				v = parse_string(s, " ");
+				G.add_edge(v.at(0), v.at(1), v.at(2));
+			}
+
+			end = std::chrono::system_clock::now();
+			elapsed_seconds = end - start;
+			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
+
+//			cout << G << endl;
+
+			start = std::chrono::system_clock::now();
+
+			std::vector<Edge*> tree = G.mst_kruskal();
+//			test_inner(G);
+//			long dist = G.clusters_kruskal(4);
+
+			end = std::chrono::system_clock::now();
+			elapsed_seconds = end - start;
+
+			cout << "Kruskal MST computed " << elapsed_seconds.count() << "s" << endl;
+
+			int sum = 0, counter = 0;
+			for (auto &&leaf : tree) {
+//				cout << std::setw(3) << ++counter << ": " << std::setw(7) << leaf->weight() << endl;
+				sum += leaf->weight();
+			}
+
+			cout << sum << endl;
+		}
+	}
+}
+
+// Kruskal's clustering
+void runTest_c3w2_2 () {
+
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+	std::chrono::duration<double> elapsed_seconds;
+	// get the input from file
+	std::ifstream file;
+	std::string testFile = "c3w2_clustering1.txt";
+	file.open(scPath + testFile/*scFile9*/);
+	if (file.fail()) {
+		cerr << "Wrong file name!" << endl;
+		file.clear();
+	}
+	else {
+		start = std::chrono::system_clock::now();
+
+		string s;
+		// read first line to get number of vertices and edges
+		getline(file, s);
+		if (file.fail()) {
+			std::cerr << scGetlineError << std::endl;
+			file.clear();
+		}
+		else if (file.eof()) {
+			std::cerr << scUnexpectedEOF << std::endl;
+			file.clear();
+		}
+		else {
+			size_t v_num;
+			std::vector<int> v = parse_string(s, " ");
+			v_num = v.front();
+			VSet nodes(v_num);
+			Graph G(nodes);
+			// read other lines
+			while (true) {
+				getline(file, s);
+				if (file.eof()) {
+					file.clear();
+					break;
+				}
+				if (file.fail()) {
+					std::cerr << scGetlineError << std::endl;
+					file.clear();
+					break;
+				}
+
+				v = parse_string(s, " ");
+				G.add_edge(v.at(0), v.at(1), v.at(2));
+
+			}
+
+			end = std::chrono::system_clock::now();
+			elapsed_seconds = end - start;
+			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
+
+//			cout << G << endl;
+
+			start = std::chrono::system_clock::now();
+
+			long dist = G.clusters_kruskal(4);
+
+			end = std::chrono::system_clock::now();
+			elapsed_seconds = end - start;
+
+			cout << "Kruskal clustering computed " << elapsed_seconds.count() << "s" << endl;
+
+//			int sum = 0, counter = 0;
+//			for (auto &&leaf : tree) {
+//				cout << std::setw(3) << ++counter << ": " << std::setw(7) << leaf->weight() << endl;
+//				sum += leaf->weight();
+//			}
+
+			cout << dist << endl;
 		}
 	}
 }

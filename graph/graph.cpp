@@ -7,9 +7,11 @@
 //
 
 #include "graph.hpp"
+#include "union-find.hpp"
 #include <iomanip>
-#include <algorithm>
 #include <unordered_set>
+#include <set>
+#include <iostream>
 
 using std::istream;
 using std::ostream;
@@ -53,6 +55,9 @@ bool Vertex::operator< (Vertex const &other) const {
 }
 bool Vertex::operator== (Vertex const &other) const {
     return label_ == other.label_;
+}
+bool Vertex::operator!= (Vertex const &other) const {
+	return label_ != other.label_;
 }
 
 bool Vertex::explored() const { return explored_; }
@@ -114,19 +119,23 @@ Graph::Graph(VSet &vertices) : vertices_(&vertices), adjacency_(vertices.v_num()
 }
 
 Graph::~Graph() {
+	// before to clear adjacency_ check if there is not pointers to edges in edges_
+	if (!edges_.empty())
+		edges_.erase(edges_.begin(), edges_.end());
+
     if (!adjacency_.empty()) {
         for (auto &&e : adjacency_)
             if (!e.empty())
                 e.clear();
         adjacency_.erase(adjacency_.begin(), adjacency_.end());
     }
-    vertices_ = NULL;
+    vertices_ = nullptr;
 }
 
 Edge Graph::add_edge(vertex_label from, vertex_label to, int weight) { // for nondirected graphs
     
     Edge edge = add_edge_di(from, to, weight);
-    if (edge.tail_ptr() != NULL && edge.head_ptr() != NULL)
+    if (edge.tail_ptr() != nullptr && edge.head_ptr() != nullptr)
         adjacency_.at(edge.head_ptr()->label() - 1).emplace_front(Edge(true, edge));
     
     return edge;
@@ -134,7 +143,7 @@ Edge Graph::add_edge(vertex_label from, vertex_label to, int weight) { // for no
 
 Edge Graph::add_edge_di(vertex_label from, vertex_label to, int weight) { // for directed graphs
     
-    Vertex *from_ptr = NULL, *to_ptr = NULL;
+    Vertex *from_ptr = nullptr, *to_ptr = nullptr;
     
     try {
         from_ptr = vertices_->add_vertex(from);
@@ -144,6 +153,7 @@ Edge Graph::add_edge_di(vertex_label from, vertex_label to, int weight) { // for
             adjacency_.push_back(l);
         }
         adjacency_.at(from - 1).emplace_front(Edge(from_ptr, to_ptr, weight));
+		edges_.push_back(&adjacency_.at(from - 1).front());
             
         ++e_num_;
         valid_scc_ = false;
@@ -206,12 +216,12 @@ std::string Graph::scc_numbers(size_t n) {
 
 void Graph::compute_ft() {
     VSet::FT_COUNTER = 0l;
-    DFS_loop(*vertices_->vertices_ptr(), adjacency_, vertices_->finishing_time_ptr(), NULL);
+    DFS_loop(*vertices_->vertices_ptr(), adjacency_, vertices_->finishing_time_ptr(), nullptr);
 }
 
 void Graph::compute_scc() {
     unexplore_all();
-    DFS_loop(*vertices_->finishing_time_ptr(), adjacency_, NULL, &scc_);
+    DFS_loop(*vertices_->finishing_time_ptr(), adjacency_, nullptr, &scc_);
     valid_scc_ = true;
 }
 
@@ -273,16 +283,16 @@ void DFS(std::vector<std::list<Edge>> &adjacency, Vertex* p_vertex,
     }
 }
 
-Edge::Edge() : p_tail_(NULL), weight_(0), p_head_(NULL) {}
+Edge::Edge() : p_tail_(nullptr), weight_(0), p_head_(nullptr) {}
 Edge::Edge(Vertex *p_tail, Vertex *p_head, int weight) : p_tail_(p_tail), weight_(weight), p_head_(p_head){}
-Edge::Edge(bool reverse, Edge const &other) : p_tail_(NULL), weight_(0), p_head_(NULL) {
+Edge::Edge(bool reverse, Edge const &other) : p_tail_(nullptr), weight_(0), p_head_(nullptr) {
     if (reverse) {
         p_head_ = other.p_tail_;
         p_tail_ = other.p_head_;
         weight_ = other.weight_;
     }
 }
-Edge::Edge(Edge const &other) : p_tail_(NULL), weight_(0), p_head_(NULL) {
+Edge::Edge(Edge const &other) : p_tail_(nullptr), weight_(0), p_head_(nullptr) {
     if (this != &other) {
         p_head_ = other.p_head_;
         weight_ = other.weight_;
@@ -294,8 +304,8 @@ Edge::Edge(Edge &&other) : p_tail_(std::move(other.p_tail_)),
                         p_head_(std::move(other.p_head_)) {}
 
 Edge::~Edge() {
-    p_tail_ = NULL;
-    p_head_ = NULL;
+    p_tail_ = nullptr;
+    p_head_ = nullptr;
 }
 
 Edge Edge::operator= (Edge const &other) {
@@ -321,6 +331,15 @@ int Edge::weight() const { return weight_; }
 
 bool Edge::operator< (Edge const &other) const {
     return this->weight_ < other.weight_;
+}
+
+bool Edge::operator== (Edge const &other) const {
+	bool compare = false;
+	if (((*(this->p_head_) == *(other.p_head_) && *(this->p_tail_) == *(other.p_tail_))
+		|| (*(this->p_head_) == *(other.p_tail_) && *(this->p_tail_) == *(other.p_head_)))
+		&& (this->weight_ == other.weight_))
+			compare = true;
+	return compare;
 }
 
 std::vector<weight_t> Graph::shortest_path(vertex_label src) {
@@ -409,3 +428,104 @@ std::vector<weight_t> Graph::mst_prim(vertex_label src) {
 
 }
 
+// Kruskal's minimum spanning tree algorithm
+std::vector<Edge*> Graph::mst_kruskal() {
+
+	// edges that form mst
+	std::vector<Edge*> mst(vertices_->vertices_ptr()->size() - 1);
+
+	init_edges();
+
+	graph::UnionFind<Vertex*> uf(vertices_->vertices_ptr()->begin(), vertices_->vertices_ptr()->end(),
+								vertices_->vertices_ptr()->size());
+
+	auto it = edges_.begin(), it_end = edges_.end();
+	vertex_label counter = 0;
+	while (counter <= vertices_->vertices_ptr()->size() - 1 &&
+			it != it_end) {
+		if (uf.find((*it)->head_ptr()->label() - 1) != uf.find((*it)->tail_ptr()->label() - 1)) {
+			mst.at(counter++) = (*it);
+			uf.union_them((*it)->head_ptr()->label() - 1, (*it)->tail_ptr()->label() - 1);
+		}
+		++it;
+	}
+
+	return mst;
+}
+
+
+void Graph::init_edges() {
+
+	std::sort(edges_.begin(), edges_.end(), [](Edge const * const lhp, Edge const * const rhp) {
+													return *lhp < *rhp; }
+	);
+
+}
+
+// output an edge
+std::ostream& operator<< (std::ostream &out, Edge const &e) {
+	out << "{" << e.p_tail_->label() << " - " << e.p_head_->label() << "} : " << e.weight() << std::endl;
+	return out;
+}
+
+void test_inner(Graph &g) {
+	g.init_edges();
+	for (auto &&edge : g.edges_) {
+		std::cout << *edge;
+	}
+
+	/*Vertex A(1), B(2), C(3), D(4), E(5), F(6), G(7);
+	std::vector<Vertex> vv = {A, B, C, D, E, F, G};
+	graph::UnionFind<Vertex> uf(vv.begin(), vv.end(), vv.size());
+	std::cout << uf << std::endl;
+
+	uf.union_them(A.label() - 1, D.label() - 1);
+	uf.union_them(E.label() - 1, B.label() - 1);
+	uf.union_them(F.label() - 1, C.label() - 1);
+	std::cout << uf << std::endl;
+
+	uf.union_them(G.label() - 1, F.label() - 1);
+	uf.union_them(B.label() - 1, A.label() - 1);
+	std::cout << uf << std::endl;
+
+	uf.union_them(E.label() - 1, G.label() - 1);
+	std::cout << uf << std::endl;*/
+
+}
+
+std::ostream& operator<< (std::ostream &out, Vertex const &v) {
+	return out << v.label();
+}
+
+long Graph::clusters_kruskal(int clusters) {
+
+	// edges that form mst
+//	std::vector<Edge*> mst(vertices_->vertices_ptr()->size() - 1);
+
+	init_edges();
+
+	graph::UnionFind<Vertex*> uf(vertices_->vertices_ptr()->begin(), vertices_->vertices_ptr()->end(),
+								 vertices_->vertices_ptr()->size());
+
+	auto it = edges_.begin(), it_end = edges_.end();
+	vertex_label counter = 0;
+	size_t clusters_counter = vertices_->vertices_ptr()->size();
+	long max_spacing = 0;
+	while (counter <= vertices_->vertices_ptr()->size() - 1 &&
+		   it != it_end && clusters_counter > clusters - 1) {
+		if (uf.find((*it)->head_ptr()->label() - 1) != uf.find((*it)->tail_ptr()->label() - 1)) {
+//			mst.at(counter++) = (*it);
+			if (clusters_counter == clusters) {
+				max_spacing = (*it)->weight();
+				break;
+			}
+			uf.union_them((*it)->head_ptr()->label() - 1, (*it)->tail_ptr()->label() - 1);
+			--clusters_counter;
+		}
+		++it;
+	}
+
+//	std::cout << uf << std::endl;
+
+	return max_spacing;
+}
