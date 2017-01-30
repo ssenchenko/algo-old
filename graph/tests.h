@@ -34,7 +34,10 @@ void runTest_c2w1 ();
 void runTest_c2w2 ();
 // Prim's minimum spanning tree algorithm
 void runTest_c3w1 ();
-
+// Kruskal's minimum spanning tree algorithm
+void runTest_c3w2_1 ();
+// Kruskal's clustering algorithm
+void runTest_c3w2_2 ();
 
 
 
