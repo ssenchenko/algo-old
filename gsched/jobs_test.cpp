@@ -9,7 +9,6 @@ using std::string;
 using std::cerr;
 using std::endl;
 
-// function to read input file (provided with a task)
 // key is 0 by default
 vector<jobs_t> read_input(string const &path) {
 	// create a vector for jobs, empty for now

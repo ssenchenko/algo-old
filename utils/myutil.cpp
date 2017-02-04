@@ -156,3 +156,50 @@ long getLong (string sInputNumber) throw(WrongIntInput) {
 
     return iInputNumber;
 }
+
+// get an long array from the string which contains ONLY 1 delimiter
+std::vector<long> parse_for_long(std::string s, std::string delimeter) {
+    std::vector<long> numbers;
+
+    std::string::size_type cur_pos = 0, found = std::string::npos;
+    long num = 0;
+    std::string tmp;
+
+    found = s.find(delimeter, cur_pos);
+    while (found != std::string::npos) {
+        tmp = s.substr(cur_pos, found - cur_pos);
+        try {
+            num = getLong(tmp);
+            numbers.push_back(num);
+        }
+        catch (std::domain_error e) {
+            std::cerr << e.what() << std::endl;
+        }
+        cur_pos = found + 1;
+        found = s.find(delimeter, cur_pos);
+    }
+    // get the last number
+    tmp = s.substr(cur_pos, found - 1);
+    found = tmp.find_first_of(scDigits);
+    if (found != std::string::npos) {
+        try {
+            num = getLong(tmp);
+            numbers.push_back(num);
+        }
+        catch (WrongIntInput e) {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return numbers;
+}
+
+// get an long array from the string which contains ONLY 1 delimiter
+std::vector<int> parse_for_int(std::string s, std::string delimeter) {
+    return parse_string(s, delimeter);
+}
+
+// get an long array from the string which contains ONLY 1 delimiter
+std::vector<std::string> parse_for_string(std::string s, std::string delimeter) {
+    return preparse_string(s, delimeter);
+}

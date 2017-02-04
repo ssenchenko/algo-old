@@ -30,14 +30,26 @@ int getInteger ();
 int getInteger (std::string sInputString) throw (WrongIntInput);
 long getLong (std::string sInputString) throw (WrongIntInput);
 
+// get an long array from the string which contains ONLY 1 delimiter
+std::vector<long> parse_for_long(std::string s, std::string delimeter = "\t");
+
+// get an long array from the string which contains ONLY 1 delimiter
+std::vector<int> parse_for_int(std::string s, std::string delimeter = "\t");
+
+// get an long array from the string which contains ONLY 1 delimiter
+std::vector<std::string> parse_for_string(std::string s, std::string delimeter = "\t");
+
+// get current directory
+std::string getCwd();
+
+// ----------------------------- DON'T USE ANY MORE --------------------------------------
 // get an integer array from the string which contains ONLY 1 delimiter
+// USE parse_for_int instead
 std::vector<int> parse_string(std::string s, std::string delimeter = "\t");
 // get a string array from the string
 // use this function if parsed string contains more than 1 delimiter
 // or if you need to get strings instead of integers
+// USE parse_for_string
 std::vector<std::string> preparse_string(std::string s, std::string delimeter = "\t");
-
-// get current directory
-std::string getCwd();
 
 #endif //HUGEINT_MYUTIL_H
