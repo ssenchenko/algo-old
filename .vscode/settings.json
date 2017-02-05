@@ -1,0 +1,25 @@
+{
+	"files.associations": {
+		"vector": "cpp",
+		"*h*h*hexception": "cpp",
+		"utility": "cpp",
+		"*h*h*hnew": "cpp",
+		"*hcctype": "cpp",
+		"cstdio": "cpp",
+		"cstdlib": "cpp",
+		"functional": "cpp",
+		"type_traits": "cpp",
+		"typeinfo": "cpp",
+		"cstdint": "cpp",
+		"cwchar": "cpp",
+		"*htuple": "cpp",
+		"*hcmath": "cpp",
+		"cwctype": "cpp",
+		"*h*hcomplex": "cpp",
+		"list": "cpp",
+		"array": "cpp",
+		"unordered_map": "cpp",
+		"unordered_set": "cpp",
+		"*h*hhashtable": "cpp"
+	}
+}

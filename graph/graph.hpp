@@ -100,7 +100,7 @@ public:
 	~Edge();
 
 	Edge operator= (Edge const &other);
-	Edge operator= (Edge &&other);
+	Edge& operator= (Edge &&other);
 
 	Vertex* tail_ptr() const;
 	Vertex* head_ptr() const;

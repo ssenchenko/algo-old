@@ -14,7 +14,7 @@ struct Job {
 	Job(Job const &j) : weight(j.weight), time(j.time) {};
 	Job(Job &&j) : weight(std::move(j.weight)), time(std::move(j.time)) {};
 	Job operator= (Job const &j) { weight = j.weight; time = j.time; return *this; };
-	Job operator= (Job &&j) { weight = std::move(j.weight); time = std::move(j.time); return *this; };
+	Job& operator= (Job &&j) { weight = std::move(j.weight); time = std::move(j.time); return *this; };
 };
 
 // first: key - defined as deciided by user
