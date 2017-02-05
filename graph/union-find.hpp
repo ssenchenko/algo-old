@@ -59,7 +59,7 @@ namespace graph {
 							  rank_(std::move(other.rank_)) {};
 
 		Node operator= (Node const &other);
-		Node operator= (Node &&other);
+		Node& operator= (Node &&other);
 
 		T value() { return value_; };
 		Node* parent_ptr() { return parent_ptr_; };
@@ -89,7 +89,7 @@ namespace graph {
 	}
 
 	template <typename T>
-	Node<T> Node<T>::operator= (Node<T> &&other) {
+	Node<T>& Node<T>::operator= (Node<T> &&other) {
 		if (this != &other) {
 			value_ = std::move(other.value_);
 			parent_ptr_ = std::move(other.parent_ptr_);

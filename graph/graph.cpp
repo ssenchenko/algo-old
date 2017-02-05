@@ -316,7 +316,7 @@ Edge Edge::operator= (Edge const &other) {
     }
     return *this;
 }
-Edge Edge::operator= (Edge &&other) {
+Edge& Edge::operator= (Edge &&other) {
     if (this != &other) {
         p_tail_ = std::move(other.p_tail_);
         weight_ = std::move(other.weight_);
