@@ -20,6 +20,8 @@
 		"array": "cpp",
 		"unordered_map": "cpp",
 		"unordered_set": "cpp",
-		"*h*hhashtable": "cpp"
+		"*h*hhashtable": "cpp",
+		"string": "cpp",
+		"*h*h*h*h*h*hlist": "cpp"
 	}
 }

@@ -5,7 +5,7 @@
 			"name": "C++ Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceRoot}/${fileBasenameNoExtension}",
+			"program": "${workspaceRoot}/mwis/obj/mwis", // ${fileBasenameNoExtension}
 			"args": [],
 			"stopAtEntry": false,
 			"cwd": "${workspaceRoot}",
