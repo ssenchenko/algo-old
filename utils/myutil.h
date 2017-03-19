@@ -8,6 +8,8 @@
 #include <string>
 #include <stdexcept>
 #include <vector>
+#include <fstream>
+#include <ios>
 
 std::string const scDataPath("../../test_data/");
 

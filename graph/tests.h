@@ -26,18 +26,24 @@ std::string const scFile5("c2w1_StrongComponents.txt"); //file for the 5th assig
 std::string const scFile6("c2w2_dijkstraData.txt"); //file for the 6th assignment
 std::string const scFile9("c3w1_edges.txt"); //file for prim's mst algorithm
 // Carager min-cut
-void runTest_c1w4 ();
+void c1w4_carager_mincut();
 size_t const ulcSize4 = 200; // size of the graph from the assignments 4 and 6
-// strong components
-void runTest_c2w1 ();
+// strong connecting components
+void c2w1_ssc();
 // Dijkstra shortest path
-void runTest_c2w2 ();
+void c2w2_dijkstra_sp();
 // Prim's minimum spanning tree algorithm
-void runTest_c3w1 ();
+void c3w1_prim_mst();
 // Kruskal's minimum spanning tree algorithm
-void runTest_c3w2_1 ();
+void c3w2_kruskal_mst();
 // Kruskal's clustering algorithm
-void runTest_c3w2_2 ();
+void c3w2_kruskal_clustering();
+// Bellman-Ford single source shortest path and
+// test for negative cycles
+void c4w1_bellman_ford_sp();
+// Floyd-Warshall for all-pairs shortest paths
+// and tests for negative cycle
+void c4w1_floyd_warshall_sp();
 
 
 

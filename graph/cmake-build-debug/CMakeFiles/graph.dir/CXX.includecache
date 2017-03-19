@@ -13,15 +13,21 @@ stdexcept
 -
 vector
 -
+fstream
+-
+ios
+-
 
 /Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/graph.cpp
 graph.hpp
 /Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/graph.hpp
+union-find.hpp
+/Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/union-find.hpp
 iomanip
 -
-algorithm
--
 unordered_set
+-
+sstream
 -
 
 /Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/graph.hpp
@@ -66,6 +72,14 @@ unordered_map
 iostream
 -
 
+/Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/union-find.hpp
+vector
+-
+list
+-
+iostream
+-
+
 /Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/utils/myutil.cpp
 myutil.h
 /Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/utils/myutil.h
@@ -80,5 +94,9 @@ string
 stdexcept
 -
 vector
+-
+fstream
+-
+ios
 -
 
