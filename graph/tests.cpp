@@ -100,8 +100,7 @@ void c2w2_dijkstra_sp() {
     std::chrono::duration<double> elapsed_seconds;
     // get the input from file
     std::ifstream file;
-    string const scFile6_test = "belmanData.txt";
-    file.open(scPath + scFile6_test);
+    file.open(scPath + scFile6);
     if (file.fail()) {
         cerr << "Wrong file name!" << endl;
 		file.close();
@@ -111,8 +110,7 @@ void c2w2_dijkstra_sp() {
         
         string s;
         std::vector<string> tuples;
-        VSet nodes(/*ulcSize4*/5);
-//        VSet nodes(4);
+        VSet nodes(ulcSize4);
         Graph G(nodes);
         while (true) {
             getline(file, s);
@@ -143,8 +141,6 @@ void c2w2_dijkstra_sp() {
         elapsed_seconds = end - start;
         cout << "Loading " << elapsed_seconds.count() << "s" << endl;
         
-//        cout << G << endl;
-        
         start = std::chrono::system_clock::now();
 
         std::vector<weight_t> path = G.sp_dijkstra(1);
@@ -156,12 +152,12 @@ void c2w2_dijkstra_sp() {
         for (auto &&n : *nodes.vertices_ptr()) {
             cout << n->label() << " | " << path[n->label() - 1] << endl;
         }
-//        string out;
-//        for (auto &&i : answers) {
-//            out += std::to_string(path[i - 1]) + ",";
-//        }
-//        out.pop_back();
-//        cout << out << endl;
+       string out;
+       for (auto &&i : answers) {
+           out += std::to_string(path[i - 1]) + ",";
+       }
+       out.pop_back();
+       cout << out << endl;
     }
 }
 
@@ -296,22 +292,17 @@ void c3w2_kruskal_mst() {
 			elapsed_seconds = end - start;
 			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
 
-//			cout << G << endl;
-
 			start = std::chrono::system_clock::now();
 
 			std::vector<Edge*> tree = G.mst_kruskal();
-//			test_inner(G);
-//			long dist = G.clusters_kruskal(4);
 
 			end = std::chrono::system_clock::now();
 			elapsed_seconds = end - start;
 
 			cout << "Kruskal MST computed " << elapsed_seconds.count() << "s" << endl;
 
-			int sum = 0, counter = 0;
+			int sum = 0;
 			for (auto &&leaf : tree) {
-//				cout << std::setw(3) << ++counter << ": " << std::setw(7) << leaf->weight() << endl;
 				sum += leaf->weight();
 			}
 

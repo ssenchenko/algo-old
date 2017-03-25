@@ -291,16 +291,16 @@ void DFS(std::vector<std::list<Edge>> &adjacency, Vertex* p_vertex,
     }
 }
 
-Edge::Edge() : p_tail_(nullptr), weight_(0), p_head_(nullptr) {}
-Edge::Edge(Vertex *p_tail, Vertex *p_head, int weight) : p_tail_(p_tail), weight_(weight), p_head_(p_head){}
-Edge::Edge(bool reverse, Edge const &other) : p_tail_(nullptr), weight_(0), p_head_(nullptr) {
+Edge::Edge() : p_tail_(nullptr), p_head_(nullptr), weight_(0)  {}
+Edge::Edge(Vertex *p_tail, Vertex *p_head, int weight) : p_tail_(p_tail), p_head_(p_head), weight_(weight){}
+Edge::Edge(bool reverse, Edge const &other) : p_tail_(nullptr), p_head_(nullptr), weight_(0) {
     if (reverse) {
         p_head_ = other.p_tail_;
         p_tail_ = other.p_head_;
         weight_ = other.weight_;
     }
 }
-Edge::Edge(Edge const &other) : p_tail_(nullptr), weight_(0), p_head_(nullptr) {
+Edge::Edge(Edge const &other) : p_tail_(nullptr), p_head_(nullptr), weight_(0) {
     if (this != &other) {
         p_head_ = other.p_head_;
         weight_ = other.weight_;
@@ -308,8 +308,8 @@ Edge::Edge(Edge const &other) : p_tail_(nullptr), weight_(0), p_head_(nullptr) {
     }
 }
 Edge::Edge(Edge &&other) : p_tail_(std::move(other.p_tail_)),
-                        weight_(std::move(other.weight_)),
-                        p_head_(std::move(other.p_head_)) {}
+                        p_head_(std::move(other.p_head_)),
+                        weight_(std::move(other.weight_)) {}
 
 Edge::~Edge() {
     p_tail_ = nullptr;
