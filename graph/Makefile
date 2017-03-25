@@ -15,7 +15,7 @@ CPPLIB = -lc++
 
 # other flags
 # -ggdb3
-CFLAGS = -glldb -O0 -Qunused-arguments -Wall -Werror -Wno-c++11-extensions -Wno-unused-variable -Wno-missing-braces
+CFLAGS = -glldb -O0 -Qunused-arguments -Wall -Werror -Wno-c++11-extensions -Wno-unused-variable
 
 # include
 INCLUDE = -I ../utils

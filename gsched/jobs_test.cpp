@@ -20,7 +20,6 @@ vector<jobs_t> read_input(string const &path) {
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
 		file.clear();
-		file.close();
 	}
 	else {
 		string s;

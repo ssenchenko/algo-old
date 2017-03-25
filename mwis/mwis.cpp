@@ -68,6 +68,7 @@ vector<long> read_array(string const &path, bool description) {
 				std::cerr << e.what() << std::endl;
 			}
 		}
+		file.close();
 	}
 
 	return nodes;

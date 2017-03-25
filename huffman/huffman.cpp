@@ -19,7 +19,6 @@ vector< HuffmanTree<long>* > read_array(string const &path, bool description) {
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
 		file.clear();
-		file.close();
 	}
 	else {
 		string s;
