@@ -11,25 +11,33 @@ int main() {
 	cout << "3 - Prim's minimum spanning tree algorithm" << endl;
 	cout << "4 - Kruskal's minimum spanning tree algorithm" << endl;
 	cout << "5 - Clustering algorithm based on Kruskal's mst" << endl;
+	cout << "6 - Bellman-Ford shortest path" << endl;
+	cout << "7 - All-pair shortest path" << endl;
 	cout << "Choose a test to run: ";
 
 	int test = getInteger();
 
 	switch (test) {
 		case 1:
-			runTest_c2w1();
+			c2w1_ssc();
 			break;
 		case 2:
-			runTest_c2w2();
+			c2w2_dijkstra_sp();
 			break;
 		case 3:
-			runTest_c3w1();
+			c3w1_prim_mst();
 			break;
 		case 4:
-			runTest_c3w2_1();
+			c3w2_kruskal_mst();
 			break;
 		case 5:
-			runTest_c3w2_2();
+			c3w2_kruskal_clustering();
+			break;
+		case 6:
+			c4w1_bellman_ford_sp();
+			break;
+		case 7:
+			c4w1_floyd_warshall_sp();
 			break;
 		default:
 			cout << "Sorry, not a valid option. Bye..." << endl;

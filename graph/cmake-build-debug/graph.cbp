@@ -99,6 +99,9 @@
 		<Unit filename="/Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/tests.h">
 			<Option target="graph"/>
 		</Unit>
+		<Unit filename="/Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/union-find.hpp">
+			<Option target="graph"/>
+		</Unit>
 		<Unit filename="/Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/utils/myutil.cpp">
 			<Option target="graph"/>
 		</Unit>

@@ -10,8 +10,7 @@
 #include "union-find.hpp"
 #include <iomanip>
 #include <unordered_set>
-#include <set>
-#include <iostream>
+#include <sstream>
 
 using std::istream;
 using std::ostream;
@@ -19,12 +18,11 @@ using std::list;
 using std::forward_list;
 
 vertex_label VSet::FT_COUNTER = 0l;
-int const Vertex::_NO_POS_ = -1;
 
 Vertex::Vertex() {
     label_ = 0l;
     explored_ = false;
-	heap_pos_ = _NO_POS_;
+	distance_ = nullptr;
 }
 
 Vertex::~Vertex() {}
@@ -32,19 +30,19 @@ Vertex::~Vertex() {}
 Vertex::Vertex(vertex_label vlabel) {
     label_ = vlabel;
     explored_ = false;
-	heap_pos_ = _NO_POS_;
+	distance_ = nullptr;
 }
 
 Vertex::Vertex(Vertex const &other) {
     label_ = other.label_;
     explored_ = other.explored_;
-	heap_pos_ = other.heap_pos_;
+	distance_ = other.distance_;
 }
 
 Vertex::Vertex(Vertex &&other) {
     label_ = std::move(other.label_);
     explored_ = std::move(other.explored_);
-	heap_pos_ = std::move(other.heap_pos_);
+	distance_ = std::move(other.distance_);
 }
 
 bool Vertex::operator> (Vertex const &other) const {
@@ -64,9 +62,19 @@ bool Vertex::explored() const { return explored_; }
 void Vertex::unexplore() { explored_ = false; }
 void Vertex::explore() { explored_ = true; }
 
+void Vertex::set_dist(distance_t* const d) { distance_ = d; };
+void Vertex::unset_dist() { distance_ = nullptr; };
+distance_t* Vertex::dist() const { return distance_; };
+
 vertex_label Vertex::label() const { return label_; }
 void Vertex::label(vertex_label vlabel) { label_ = vlabel; }
 
+distance_t::distance_t(weight_t first, Vertex* second) {
+	this->first = first;
+	this->second = second;
+	this->second->set_dist(this);
+}
+distance_t::~distance_t() { second->unset_dist(); }
 
 VSet::VSet() {
     v_num_ = 0;
@@ -342,7 +350,7 @@ bool Edge::operator== (Edge const &other) const {
 	return compare;
 }
 
-std::vector<weight_t> Graph::shortest_path(vertex_label src) {
+std::vector<weight_t> Graph::sp_dijkstra(vertex_label src) {
     
     // a container to storage edges to process
     std::vector<distance_t> djk;
@@ -351,19 +359,19 @@ std::vector<weight_t> Graph::shortest_path(vertex_label src) {
     std::vector<weight_t> dist (vertices_->vertices_ptr()->size(), _INF_);
     
     // intialize with source distance and make a heap
-    djk.emplace_back(std::make_pair(0, vertices_->vertices_ptr()->at(src - 1)));
+    djk.emplace_back(0, vertices_->vertices_ptr()->at(src - 1));
 	std::make_heap(djk.begin(), djk.end(), distComp);
     
     dist.at(src - 1) = 0ul;
-    
+
+	weight_t v_dist, *w_dist;
     while (!djk.empty()) {
         
         // get a min distance vertex from the heap
         std::pop_heap(djk.begin(), djk.end(), distComp);
         Vertex* tmp = djk.back().second;
         djk.pop_back();
-        
-        weight_t v_dist = 0ul, *w_dist;
+
         // get all edges with tail at vertex tmp
         for (auto &&e : adjacency_.at(tmp->label() - 1)) {
             w_dist = &dist.at(e.head_ptr()->label() - 1);
@@ -371,7 +379,10 @@ std::vector<weight_t> Graph::shortest_path(vertex_label src) {
             if (*w_dist > v_dist) {
 				// update distance and add vertex to the heap
                 *w_dist = v_dist;
-                djk.emplace_back(std::make_pair(*w_dist, e.head_ptr()));
+				if (e.head_ptr()->dist() == nullptr)  // vertex is not in the djk heap
+                	djk.emplace_back(*w_dist, e.head_ptr()); // create a new distance object in a djk
+				else // vertex is already in djk -- update distance
+					e.head_ptr()->dist()->first = *w_dist;
                 std::push_heap(djk.begin(), djk.end(), distComp);
 			}
         }
@@ -395,7 +406,7 @@ std::vector<weight_t> Graph::mst_prim(vertex_label src) {
 	std::unordered_set<vertex_label> explored_vertices;
 
 	// intialize with source distance and make a heap
-	prim.emplace_back(std::make_pair(0, vertices_->vertices_ptr()->at(src - 1)));
+	prim.emplace_back(0, vertices_->vertices_ptr()->at(src - 1));
 	std::make_heap(prim.begin(), prim.end(), distComp);
 
 	vertex_label processed = 0;
@@ -418,7 +429,7 @@ std::vector<weight_t> Graph::mst_prim(vertex_label src) {
 		// get all edges with tail at vertex tmp
 		for (auto &&e : adjacency_.at(tmp->label() - 1)) {
 			if (explored_vertices.find(e.head_ptr()->label()) == explored_vertices.end()) {
-				prim.emplace_back(std::make_pair(e.weight(), e.head_ptr()));
+				prim.emplace_back(e.weight(), e.head_ptr());
 				std::push_heap(prim.begin(), prim.end(), distComp);
 			}
 		}
@@ -468,30 +479,30 @@ std::ostream& operator<< (std::ostream &out, Edge const &e) {
 	return out;
 }
 
-void test_inner(Graph &g) {
-	g.init_edges();
-	for (auto &&edge : g.edges_) {
-		std::cout << *edge;
-	}
-
-	/*Vertex A(1), B(2), C(3), D(4), E(5), F(6), G(7);
-	std::vector<Vertex> vv = {A, B, C, D, E, F, G};
-	graph::UnionFind<Vertex> uf(vv.begin(), vv.end(), vv.size());
-	std::cout << uf << std::endl;
-
-	uf.union_them(A.label() - 1, D.label() - 1);
-	uf.union_them(E.label() - 1, B.label() - 1);
-	uf.union_them(F.label() - 1, C.label() - 1);
-	std::cout << uf << std::endl;
-
-	uf.union_them(G.label() - 1, F.label() - 1);
-	uf.union_them(B.label() - 1, A.label() - 1);
-	std::cout << uf << std::endl;
-
-	uf.union_them(E.label() - 1, G.label() - 1);
-	std::cout << uf << std::endl;*/
-
-}
+//void test_inner(Graph &g) {
+//	g.init_edges();
+//	for (auto &&edge : g.edges_) {
+//		std::cout << *edge;
+//	}
+//
+//	/*Vertex A(1), B(2), C(3), D(4), E(5), F(6), G(7);
+//	std::vector<Vertex> vv = {A, B, C, D, E, F, G};
+//	graph::UnionFind<Vertex> uf(vv.begin(), vv.end(), vv.size());
+//	std::cout << uf << std::endl;
+//
+//	uf.union_them(A.label() - 1, D.label() - 1);
+//	uf.union_them(E.label() - 1, B.label() - 1);
+//	uf.union_them(F.label() - 1, C.label() - 1);
+//	std::cout << uf << std::endl;
+//
+//	uf.union_them(G.label() - 1, F.label() - 1);
+//	uf.union_them(B.label() - 1, A.label() - 1);
+//	std::cout << uf << std::endl;
+//
+//	uf.union_them(E.label() - 1, G.label() - 1);
+//	std::cout << uf << std::endl;*/
+//
+//}
 
 std::ostream& operator<< (std::ostream &out, Vertex const &v) {
 	return out << v.label();
@@ -528,4 +539,137 @@ long Graph::clusters_kruskal(int clusters) {
 //	std::cout << uf << std::endl;
 
 	return max_spacing;
+}
+
+bool Graph::sp_bellman_ford(std::vector<weight_t > &path) throw (path_init_error) {
+	bool no_negative_cycles = true;
+
+	std::string w;
+	if (path.size() != vertices_->v_num()) {
+		w = "Number of elements in path vector must be equal to the number of vertices in the graph";
+		throw path_init_error(w);
+	}
+
+	path.at(0) = 0;
+	weight_t w_dist, *v_dist;
+	for (auto &&v : *(vertices_->vertices_ptr())) {
+		for (auto &&e : edges_) { //for every edge  (u, v)
+			// distance at v so far
+			v_dist = &path.at(e->head_ptr()->label() - 1);
+			// distance at u + distance between u and v
+			w_dist = path.at(e->tail_ptr()->label() - 1) + e->weight();
+			if (*v_dist > w_dist) {
+				// update distance (relax constraint)
+				*v_dist = w_dist;
+			}
+		}
+	}
+	// check for negative cycles
+	for (auto &&e : edges_)
+		if (path.at(e->head_ptr()->label() - 1) > path.at(e->tail_ptr()->label() - 1) + e->weight()) {
+			no_negative_cycles = false;
+			break;
+		}
+
+	return no_negative_cycles;
+}
+
+// represents graph as an adjacency matrix
+void Graph::to_matrix(AdjMatrix &graph, weight_t default_value) {
+	try {
+		for (auto &&e : edges_) {
+			graph[e->tail_ptr()->label() - 1][e->head_ptr()->label() - 1] = e->weight();
+		}
+	}
+	catch (std::out_of_range e) {
+		std::cerr << e.what() << std::endl;
+	}
+
+	// set distances (j, j) to 0 for every vertex if
+	for (size_t j = 0, n = vertices_->v_num() - 1 ; j <= n; j++)
+		if (graph[j][j] == default_value)
+			graph[j][j] = 0;
+}
+
+// Floyd-Warshall all-pairs shortest path
+bool Graph::sp_floyd_warshall(AdjMatrix &graph, weight_t default_value) {
+	bool no_negative_cycle = true;
+	to_matrix(graph, default_value);
+	//std::cout << std::endl << graph << std::endl;
+
+	// iterate through all possible distances between vertices
+	// i.e with 0, 1, 2... vertices in between
+	size_t V = vertices_->v_num();
+	for (size_t k = 0; k < V; k++) {
+		// iterate through every vertex as a source
+		for (size_t i = 0; i < V; i++) {
+			//iterate through every vertex as a destination
+			for (size_t j = 0; j < V; j++) {
+				if (graph[i][k] +  graph[k][j] < graph[i][j])
+					graph[i][j] = graph[i][k] +  graph[k][j];
+			}
+		}
+	}
+
+	for (size_t j = 0, n = vertices_->v_num() - 1 ; j <= n; j++)
+		if (graph[j][j] < 0) {
+			no_negative_cycle = false;
+			break;
+		}
+
+	return no_negative_cycle;
+}
+
+AdjMatrix::AdjMatrix(size_t v, weight_t default_val) : sz_(v) {
+	m_ = new weight_t*[sz_];
+
+	for (size_t i = 0; i <= sz_ - 1; i++) {
+		m_[i] = new int[sz_];
+
+		for (size_t j = 0; j <= sz_ - 1; j++) {
+			m_[i][j] = default_val;
+		}
+	}
+}
+
+AdjMatrix::~AdjMatrix() {
+	for (size_t i = 0; i <= sz_ - 1; i++)
+		delete [] m_[i];
+	delete [] m_;
+}
+
+std::ostream& operator<< (std::ostream &out, AdjMatrix const &m) {
+	std::ostringstream ss;
+	std::string s;
+	for (size_t i = 0; i <= m.sz_ - 1; i++) {
+		for (size_t j = 0; j <= m.sz_ - 1; j++) {
+			ss << std::setw(8) << std::to_string(m.m_[i][j]) + " ";
+		}
+		s = ss.str();
+		s.pop_back(); // remove last space in a row
+		out << s << std::endl;
+		ss.str(std::string());
+	}
+	return out;
+}
+
+weight_t* AdjMatrix::operator[] (size_t index) throw (std::out_of_range) {
+	if (index > sz_ - 1)
+		throw std::out_of_range("No vertex with such index!");
+	return m_[index];
+}
+
+weight_t const * AdjMatrix::operator[] (size_t index) const throw (std::out_of_range) {
+	if (index > sz_ - 1)
+		throw std::out_of_range("No vertex with such index!");
+	return const_cast<weight_t const *>(m_[index]);
+};
+
+weight_t AdjMatrix::min() {
+	weight_t minimum = 0;
+	for (size_t i = 0; i <= sz_ - 1; i++)
+		for (size_t j = 0; j <= sz_ - 1; j++)
+			if (m_[i][j] < minimum)
+				minimum = m_[i][j];
+	return minimum;
 }

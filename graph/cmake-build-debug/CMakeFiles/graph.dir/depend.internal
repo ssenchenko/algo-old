@@ -7,6 +7,7 @@ CMakeFiles/graph.dir/Users/slava_senchenko/Documents/education/Stanford/Algorith
 CMakeFiles/graph.dir/graph.cpp.o
  /Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/graph.cpp
  /Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/graph.hpp
+ /Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/union-find.hpp
 CMakeFiles/graph.dir/main.cpp.o
  ../../utils/myutil.h
  /Users/slava_senchenko/Documents/education/Stanford/Algorithms/src/graph/main.cpp

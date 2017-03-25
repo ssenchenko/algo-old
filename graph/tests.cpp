@@ -27,7 +27,7 @@ using std::cerr;
 using std::string;
 
 // strong components detection
-void runTest_c2w1 () {
+void c2w1_ssc() {
 
     std::chrono::time_point<std::chrono::system_clock> start, end;
     // get the input from file
@@ -35,7 +35,7 @@ void runTest_c2w1 () {
     file.open(scPath + scFile5);
     if (file.fail()) {
         cerr << "Wrong file name!" << endl;
-        file.clear();
+		file.close();
     }
     else {
         string s;
@@ -74,6 +74,7 @@ void runTest_c2w1 () {
             G.add_edge_di(v.at(0), v.at(1));
             Grev.add_edge_di(v.at(1), v.at(0));
         }
+		file.close();
         end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
         cout << "Loading " << elapsed_seconds.count() << "s" << endl;
@@ -92,25 +93,25 @@ void runTest_c2w1 () {
 
 
 // Dijkstra shortest path
-void runTest_c2w2 () {
+void c2w2_dijkstra_sp() {
     std::array<vertex_label, 10> answers = {7,37,59,82,99,115,133,165,188,197};
     
     std::chrono::time_point<std::chrono::system_clock> start, end;
     std::chrono::duration<double> elapsed_seconds;
     // get the input from file
     std::ifstream file;
-    string const scFile6_test = "dijkstraData.txt";
-    file.open(scPath + scFile6);
+    string const scFile6_test = "belmanData.txt";
+    file.open(scPath + scFile6_test);
     if (file.fail()) {
         cerr << "Wrong file name!" << endl;
-        file.clear();
+		file.close();
     }
     else {
         start = std::chrono::system_clock::now();
         
         string s;
         std::vector<string> tuples;
-        VSet nodes(ulcSize4);
+        VSet nodes(/*ulcSize4*/5);
 //        VSet nodes(4);
         Graph G(nodes);
         while (true) {
@@ -137,6 +138,7 @@ void runTest_c2w2 () {
                 std::cerr << e.what() << std::endl;
             }
         }
+		file.close();
         end = std::chrono::system_clock::now();
         elapsed_seconds = end - start;
         cout << "Loading " << elapsed_seconds.count() << "s" << endl;
@@ -144,26 +146,26 @@ void runTest_c2w2 () {
 //        cout << G << endl;
         
         start = std::chrono::system_clock::now();
-        
-        std::vector<weight_t> path = G.shortest_path(1);
+
+        std::vector<weight_t> path = G.sp_dijkstra(1);
         
         end = std::chrono::system_clock::now();
         elapsed_seconds = end - start;
         
         cout << "Shortest path computed " << elapsed_seconds.count() << "s" << endl;
-//        for (auto &&n : *nodes.vertices_ptr()) {
-//            cout << n->label() << " | " << path[n->label() - 1] << endl;
-//        }
-        string out;
-        for (auto &&i : answers) {
-            out += std::to_string(path[i - 1]) + ",";
+        for (auto &&n : *nodes.vertices_ptr()) {
+            cout << n->label() << " | " << path[n->label() - 1] << endl;
         }
-        out.pop_back();
-        cout << out << endl;
+//        string out;
+//        for (auto &&i : answers) {
+//            out += std::to_string(path[i - 1]) + ",";
+//        }
+//        out.pop_back();
+//        cout << out << endl;
     }
 }
 
-void runTest_c3w1 () {
+void c3w1_prim_mst() {
 
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::chrono::duration<double> elapsed_seconds;
@@ -173,7 +175,7 @@ void runTest_c3w1 () {
 	file.open(scPath + testFile/*scFile9*/);
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
-		file.clear();
+		file.close();
 	}
 	else {
 		start = std::chrono::system_clock::now();
@@ -183,11 +185,11 @@ void runTest_c3w1 () {
 		getline(file, s);
 		if (file.fail()) {
 			std::cerr << scGetlineError << std::endl;
-			file.clear();
+			file.close();
 		}
 		else if (file.eof()) {
 			std::cerr << scUnexpectedEOF << std::endl;
-			file.clear();
+			file.close();
 		}
 		else {
 			size_t v_num;
@@ -212,7 +214,7 @@ void runTest_c3w1 () {
 				G.add_edge(v.at(0), v.at(1), v.at(2));
 
 			}
-
+			file.close();
 			end = std::chrono::system_clock::now();
 			elapsed_seconds = end - start;
 			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
@@ -240,7 +242,7 @@ void runTest_c3w1 () {
 }
 
 // Kruskal's minimum spanning tree algorithm
-void runTest_c3w2_1 () {
+void c3w2_kruskal_mst() {
 
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::chrono::duration<double> elapsed_seconds;
@@ -250,7 +252,7 @@ void runTest_c3w2_1 () {
 	file.open(scPath + testFile/*scFile9*/);
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
-		file.clear();
+		file.close();
 	}
 	else {
 		start = std::chrono::system_clock::now();
@@ -260,11 +262,11 @@ void runTest_c3w2_1 () {
 		getline(file, s);
 		if (file.fail()) {
 			std::cerr << scGetlineError << std::endl;
-			file.clear();
+			file.close();
 		}
 		else if (file.eof()) {
 			std::cerr << scUnexpectedEOF << std::endl;
-			file.clear();
+			file.close();
 		}
 		else {
 			size_t v_num;
@@ -289,7 +291,7 @@ void runTest_c3w2_1 () {
 				v = parse_string(s, " ");
 				G.add_edge(v.at(0), v.at(1), v.at(2));
 			}
-
+			file.close();
 			end = std::chrono::system_clock::now();
 			elapsed_seconds = end - start;
 			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
@@ -319,7 +321,7 @@ void runTest_c3w2_1 () {
 }
 
 // Kruskal's clustering
-void runTest_c3w2_2 () {
+void c3w2_kruskal_clustering() {
 
 	std::chrono::time_point<std::chrono::system_clock> start, end;
 	std::chrono::duration<double> elapsed_seconds;
@@ -329,7 +331,7 @@ void runTest_c3w2_2 () {
 	file.open(scPath + testFile/*scFile9*/);
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
-		file.clear();
+		file.close();
 	}
 	else {
 		start = std::chrono::system_clock::now();
@@ -339,11 +341,11 @@ void runTest_c3w2_2 () {
 		getline(file, s);
 		if (file.fail()) {
 			std::cerr << scGetlineError << std::endl;
-			file.clear();
+			file.close();
 		}
 		else if (file.eof()) {
 			std::cerr << scUnexpectedEOF << std::endl;
-			file.clear();
+			file.close();
 		}
 		else {
 			size_t v_num;
@@ -368,7 +370,7 @@ void runTest_c3w2_2 () {
 				G.add_edge(v.at(0), v.at(1), v.at(2));
 
 			}
-
+			file.close();
 			end = std::chrono::system_clock::now();
 			elapsed_seconds = end - start;
 			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
@@ -395,7 +397,172 @@ void runTest_c3w2_2 () {
 	}
 }
 
-/*void runTest_c1w4 () {
+// Bellman-Ford to test for negative cycles +
+// Floyd-Warshall for all-pairs shortest paths
+void c4w1_bellman_ford_sp() {
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+	std::chrono::duration<double> elapsed_seconds;
+	// get the input from file
+	std::ifstream file;
+	string const scFile6_test = "belmanData.txt";
+	file.open(scPath + scFile6_test);
+	if (file.fail()) {
+		cerr << "Wrong file name!" << endl;
+		file.close();
+	}
+	else {
+		start = std::chrono::system_clock::now();
+
+		string s;
+		std::vector<string> tuples;
+		size_t nodes_num = 5;
+		VSet nodes(nodes_num);
+		Graph G(nodes);
+		while (true) {
+			getline(file, s);
+			if (file.eof()) {
+				file.clear();
+				break;
+			}
+			if (file.fail()) {
+				std::cerr << scGetlineError << std::endl;
+				file.clear();
+				break;
+			}
+			tuples = preparse_string(s);
+			try {
+				vertex_label from = getInteger(tuples.front());
+
+				for (auto it = tuples.begin() + 1, it_end = tuples.end(); it != it_end; it++) {
+					std::vector<int> v = parse_string(*it, ",");
+					G.add_edge_di(from, v.at(0), v.at(1));
+				}
+			}
+			catch (std::domain_error e) {
+				std::cerr << e.what() << std::endl;
+			}
+		}
+		file.close();
+		end = std::chrono::system_clock::now();
+		elapsed_seconds = end - start;
+		cout << "Loading " << elapsed_seconds.count() << "s" << endl;
+
+//        cout << G << endl;
+
+		std::vector<weight_t> path(nodes.v_num(), _INF_);
+		try {
+			start = std::chrono::system_clock::now();
+			bool no_negative_cycles = G.sp_bellman_ford(path);
+
+			end = std::chrono::system_clock::now();
+			elapsed_seconds = end - start;
+
+			cout << "Shortest path computed " << elapsed_seconds.count() << "s" << endl;
+
+			if (no_negative_cycles)
+				for (auto &&n : *nodes.vertices_ptr()) {
+					cout << n->label() << " | " << path[n->label() - 1] << endl;
+				}
+			else
+				cout << "There is a negative cycle" << endl;
+		}
+		catch (std::logic_error e) {
+			std::cerr << e.what() << std::endl;
+		}
+	}
+}
+
+// Floyd-Warshall for all-pairs shortest paths
+// and tests for negative cycle
+void c4w1_floyd_warshall_sp() {
+	std::chrono::time_point<std::chrono::system_clock> start, end;
+	std::chrono::duration<double> elapsed_seconds;
+	// get the input from file
+	std::ifstream file;
+	string const scFile_test = "c4w1_g3.txt";//"belmanData2.txt";//
+	file.open(scPath + scFile_test);
+	if (file.fail()) {
+		cerr << "Wrong file name!" << endl;
+		file.close();
+	}
+	else {
+		start = std::chrono::system_clock::now();
+		string s;
+		std::vector<string> tuples;
+		getline(file, s);
+		if (file.eof() || file.fail()) {
+			file.close();
+			std::cerr << "Error reading file " << scFile_test;
+		}
+		else {
+			std::vector<long> v;
+			size_t nodes_num = 0;
+			try {
+				// read number of vertices
+				v = parse_for_long(s, " ");
+				nodes_num = v.at(0);
+			}
+			catch (WrongIntInput e) {
+				std::cerr << e.what() << std::endl;
+			}
+
+			VSet nodes(nodes_num);
+			Graph G(nodes);
+			while (true) {
+				getline(file, s);
+				if (file.eof()) {
+					file.clear();
+					break;
+				}
+				if (file.fail()) {
+					std::cerr << scGetlineError << std::endl;
+					file.clear();
+					break;
+				}
+
+				try {
+					v = parse_for_long(s, " ");
+					G.add_edge_di(v.at(0), v.at(1), v.at(2));
+				}
+				catch (std::domain_error e) {
+					std::cerr << e.what() << std::endl;
+				}
+			}
+			file.close();
+			end = std::chrono::system_clock::now();
+			elapsed_seconds = end - start;
+			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
+
+//        cout << G << endl;
+
+			AdjMatrix path(nodes.v_num());
+			// #debug
+			//cout << path << endl;
+			try {
+				start = std::chrono::system_clock::now();
+				bool no_negative_cycles = G.sp_floyd_warshall(path);
+
+				end = std::chrono::system_clock::now();
+				elapsed_seconds = end - start;
+
+				cout << "Shortest path computed " << elapsed_seconds.count() << "s" << endl;
+
+				if (no_negative_cycles) {
+					cout << "Min of all-pair shortest path " << path.min() << endl;
+					//cout << path << endl;
+				}
+				else
+					cout << "There is a negative cycle" << endl;
+			}
+			catch (std::logic_error e) {
+				std::cerr << e.what() << std::endl;
+			}
+		}
+
+	}
+}
+
+/*void c1w4_carager_mincut () {
     AdjacencyList graph;
 
     // get the input from file

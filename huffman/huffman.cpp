@@ -19,6 +19,7 @@ vector< HuffmanTree<long>* > read_array(string const &path, bool description) {
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
 		file.clear();
+		file.close();
 	}
 	else {
 		string s;
@@ -68,6 +69,7 @@ vector< HuffmanTree<long>* > read_array(string const &path, bool description) {
 				std::cerr << e.what() << std::endl;
 			}
 		}
+		file.close();
 	}
 
 	return nodes;
