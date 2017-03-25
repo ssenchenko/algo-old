@@ -4,11 +4,7 @@
 //
 //  Created by  Slava Senchenko on 2016-10-28.
 //  Copyright © 2016  Slava Senchenko. All rights reserved.
-//
-//  this file contains constants and additional functions
-//  to run tests on following classes
-//      - HugeInteger
-//
+
 
 
 #include "tests.h"
@@ -35,7 +31,6 @@ void c2w1_ssc() {
     file.open(scPath + scFile5);
     if (file.fail()) {
         cerr << "Wrong file name!" << endl;
-		file.close();
     }
     else {
         string s;
@@ -94,25 +89,22 @@ void c2w1_ssc() {
 
 // Dijkstra shortest path
 void c2w2_dijkstra_sp() {
-    std::array<vertex_label, 10> answers = {7,37,59,82,99,115,133,165,188,197};
+    std::array<vertex_label, 10> answers { {7,37,59,82,99,115,133,165,188,197} };
     
     std::chrono::time_point<std::chrono::system_clock> start, end;
     std::chrono::duration<double> elapsed_seconds;
     // get the input from file
     std::ifstream file;
-    string const scFile6_test = "belmanData.txt";
-    file.open(scPath + scFile6_test);
+    file.open(scPath + scFile6);
     if (file.fail()) {
         cerr << "Wrong file name!" << endl;
-		file.close();
     }
     else {
         start = std::chrono::system_clock::now();
         
         string s;
         std::vector<string> tuples;
-        VSet nodes(/*ulcSize4*/5);
-//        VSet nodes(4);
+        VSet nodes(ulcSize4);
         Graph G(nodes);
         while (true) {
             getline(file, s);
@@ -143,8 +135,6 @@ void c2w2_dijkstra_sp() {
         elapsed_seconds = end - start;
         cout << "Loading " << elapsed_seconds.count() << "s" << endl;
         
-//        cout << G << endl;
-        
         start = std::chrono::system_clock::now();
 
         std::vector<weight_t> path = G.sp_dijkstra(1);
@@ -156,12 +146,12 @@ void c2w2_dijkstra_sp() {
         for (auto &&n : *nodes.vertices_ptr()) {
             cout << n->label() << " | " << path[n->label() - 1] << endl;
         }
-//        string out;
-//        for (auto &&i : answers) {
-//            out += std::to_string(path[i - 1]) + ",";
-//        }
-//        out.pop_back();
-//        cout << out << endl;
+       string out;
+       for (auto &&i : answers) {
+           out += std::to_string(path[i - 1]) + ",";
+       }
+       out.pop_back();
+       cout << out << endl;
     }
 }
 
@@ -171,11 +161,9 @@ void c3w1_prim_mst() {
 	std::chrono::duration<double> elapsed_seconds;
 	// get the input from file
 	std::ifstream file;
-	std::string testFile = "test-mst.txt";
-	file.open(scPath + testFile/*scFile9*/);
+	file.open(scPath + scFile9);
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
-		file.close();
 	}
 	else {
 		start = std::chrono::system_clock::now();
@@ -218,8 +206,6 @@ void c3w1_prim_mst() {
 			end = std::chrono::system_clock::now();
 			elapsed_seconds = end - start;
 			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
-
-        	// cout << G << endl;
 
 			start = std::chrono::system_clock::now();
 
@@ -248,11 +234,10 @@ void c3w2_kruskal_mst() {
 	std::chrono::duration<double> elapsed_seconds;
 	// get the input from file
 	std::ifstream file;
-	std::string testFile = "c3w1_edges.txt";
-	file.open(scPath + testFile/*scFile9*/);
+	file.open(scPath + scFile9);
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
-		file.close();
+		file.clear();
 	}
 	else {
 		start = std::chrono::system_clock::now();
@@ -296,22 +281,17 @@ void c3w2_kruskal_mst() {
 			elapsed_seconds = end - start;
 			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
 
-//			cout << G << endl;
-
 			start = std::chrono::system_clock::now();
 
 			std::vector<Edge*> tree = G.mst_kruskal();
-//			test_inner(G);
-//			long dist = G.clusters_kruskal(4);
 
 			end = std::chrono::system_clock::now();
 			elapsed_seconds = end - start;
 
 			cout << "Kruskal MST computed " << elapsed_seconds.count() << "s" << endl;
 
-			int sum = 0, counter = 0;
+			int sum = 0;
 			for (auto &&leaf : tree) {
-//				cout << std::setw(3) << ++counter << ": " << std::setw(7) << leaf->weight() << endl;
 				sum += leaf->weight();
 			}
 
@@ -331,7 +311,7 @@ void c3w2_kruskal_clustering() {
 	file.open(scPath + testFile/*scFile9*/);
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
-		file.close();
+		file.clear();
 	}
 	else {
 		start = std::chrono::system_clock::now();
@@ -375,22 +355,13 @@ void c3w2_kruskal_clustering() {
 			elapsed_seconds = end - start;
 			cout << "Loading " << elapsed_seconds.count() << "s" << endl;
 
-//			cout << G << endl;
-
 			start = std::chrono::system_clock::now();
 
 			long dist = G.clusters_kruskal(4);
 
 			end = std::chrono::system_clock::now();
 			elapsed_seconds = end - start;
-
 			cout << "Kruskal clustering computed " << elapsed_seconds.count() << "s" << endl;
-
-//			int sum = 0, counter = 0;
-//			for (auto &&leaf : tree) {
-//				cout << std::setw(3) << ++counter << ": " << std::setw(7) << leaf->weight() << endl;
-//				sum += leaf->weight();
-//			}
 
 			cout << dist << endl;
 		}
@@ -408,7 +379,7 @@ void c4w1_bellman_ford_sp() {
 	file.open(scPath + scFile6_test);
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
-		file.close();
+		file.clear();
 	}
 	else {
 		start = std::chrono::system_clock::now();
@@ -447,8 +418,6 @@ void c4w1_bellman_ford_sp() {
 		elapsed_seconds = end - start;
 		cout << "Loading " << elapsed_seconds.count() << "s" << endl;
 
-//        cout << G << endl;
-
 		std::vector<weight_t> path(nodes.v_num(), _INF_);
 		try {
 			start = std::chrono::system_clock::now();
@@ -483,7 +452,7 @@ void c4w1_floyd_warshall_sp() {
 	file.open(scPath + scFile_test);
 	if (file.fail()) {
 		cerr << "Wrong file name!" << endl;
-		file.close();
+		file.clear();
 	}
 	else {
 		start = std::chrono::system_clock::now();

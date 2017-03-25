@@ -5,7 +5,6 @@
 int main() {
 	// read the file
 	std::string file = scPath + scFileName;
-	// file = "/Users/slava_senchenko/Documents/Education/Stanford/Algorithms/src/mwis/short-mwis";
 	std::vector<long> path_graph = read_array(file, true);
 	if (path_graph.empty()) {
 		std::cerr << "Nothing has been loaded" << std::endl;
